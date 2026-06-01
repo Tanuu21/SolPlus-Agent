@@ -1,0 +1,46 @@
+import TelegramBot from 'node-telegram-bot-api';
+import { PrismaClient } from '@prisma/client';
+
+const token = process.env.TELEGRAM_BOT_TOKEN || '';
+const prisma = new PrismaClient();
+const bot = new TelegramBot(token, { polling: false }); // Runs as dedicated outbound event emitter
+
+export async function broadcastOpportunityAlert(chatId: string, reportId: string) {
+  const report = await prisma.report.findUnique({
+    where: { id: reportId },
+    include: { token: true }
+  });
+
+  if (!report) return;
+
+  const alertTemplate = `
+⚡ <b>[SOLPLUS AGENT] NEW OPPORTUNITY DETECTED</b>
+
+<b>Asset Matrix:</b> ${report.token.name} (${report.token.symbol})
+<b>Target Mint:</b> <code>${report.token.mint}</code>
+
+📊 <b>Evaluation Analytics Score:</b> <code>${report.finalScore}/100</code>
+▪️ Growth Factor Vector: ${report.token.growthScore}%
+▪️ Risk Exposure Index: ${report.token.riskScore}%
+▪️ Core Sentiment Metric: ${report.token.sentimentScore}%
+
+💡 <b>Executive Summary:</b>
+<i>${report.executiveSummary}</i>
+
+💎 <b>System Action Recommendation:</b> <b>${report.token.recommendation}</b>
+  `;
+
+  await bot.sendMessage(chatId, alertTemplate, { parse_mode: 'HTML' });
+}
+
+export async function broadcastHighRiskAlert(chatId: string, tokenMint: string, classification: string) {
+  const alertTemplate = `
+🚨 <b>[SOLPLUS ALERT] THREAT ANOMALY CAPTURED</b>
+
+<b>Target Mint Address:</b> <code>${tokenMint}</code>
+<b>Threat Vector Classification:</b> ⚠️ <b>${classification}</b>
+
+<b>System State:</b> Execution paths dropped immediately. Core safeguards running. Neutralizing active exposures across active pools.
+  `;
+  await bot.sendMessage(chatId, alertTemplate, { parse_mode: 'HTML' });
+}

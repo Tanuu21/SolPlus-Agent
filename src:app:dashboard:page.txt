@@ -1,0 +1,112 @@
+'use client';
+import React from 'react';
+import { GlassCard } from '@/components/ui/GlassCard';
+import { PaymentFlow } from '@/components/ui/PaymentFlow';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
+const mockPerformanceData = [
+  { name: '02:00', value: 420 },
+  { name: '04:00', value: 510 },
+  { name: '06:00', value: 480 },
+  { name: '08:00', value: 640 },
+  { name: '10:00', value: 780 },
+  { name: '12:00', value: 920 },
+];
+
+export default function DashboardOverview() {
+  return (
+    <div className="space-y-8">
+      {/* Header Profile Title */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/[0.04] pb-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-white">Intelligence Matrix Overview</h2>
+          <p className="text-gray-400 text-sm mt-1">Autonomous orchestration activity real-time status matrix analytics.</p>
+        </div>
+        <div className="flex items-center gap-3 font-mono text-xs bg-surface border border-white/[0.06] px-4 py-2 rounded-xl">
+          <span className="w-2 h-2 rounded-full bg-accentEmerald animate-pulse" />
+          <span>Agent Core status: RUNNING CYCLE</span>
+        </div>
+      </div>
+
+      {/* Grid Key Performance Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { title: 'Operational Agents', value: '12', change: 'Continuous execution', color: 'text-accentPurple' },
+          { title: 'Processed Analysis', value: '41,920', change: '+1,430 within last hr', color: 'text-accentCyan' },
+          { title: 'Escrow Settlement Volume', value: '482.50 SOL', change: 'Managed via x402 routes', color: 'text-accentEmerald' },
+          { title: 'Core Decision Precision', value: '99.42%', change: 'Target evaluation margin', color: 'text-white' }
+        ].map((metric, i) => (
+          <GlassCard key={i} className="border-white/[0.04]">
+            <p className="text-xs uppercase font-mono tracking-widest text-gray-500 font-semibold">{metric.title}</p>
+            <h3 className={`text-3xl font-extrabold tracking-tight mt-3 ${metric.color}`}>{metric.value}</h3>
+            <p className="text-xs text-gray-400 mt-1 font-mono">{metric.change}</p>
+          </GlassCard>
+        ))}
+      </div>
+
+      {/* Interactive Evaluation Volume Flow Graph */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8">
+          <GlassCard className="h-[380px] flex flex-col justify-between border-white/[0.05]">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h3 className="text-white text-base font-semibold tracking-wide">Ace AI Pipeline Call Distribution</h3>
+                <p className="text-xs text-gray-500 font-mono mt-0.5">Telemetry tracking query evaluation throughput metrics.</p>
+              </div>
+            </div>
+            <div className="flex-1 w-full min-h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={mockPerformanceData}>
+                  <defs>
+                    <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#06B6D4" stopOpacity={0.25}/>
+                      <stop offset="95%" stopColor="#06B6D4" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="name" stroke="#333" fontSize={11} fontFamily="monospace"/>
+                  <YAxis stroke="#333" fontSize={11} fontFamily="monospace"/>
+                  <Tooltip contentStyle={{ backgroundColor: '#0B0B0B', borderColor: '#222', color: '#fff' }}/>
+                  <Area type="monotone" dataKey="value" stroke="#06B6D4" strokeWidth={2} fillOpacity={1} fill="url(#chartGlow)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </GlassCard>
+        </div>
+
+        {/* Live Token Evaluation Stack */}
+        <div className="lg:col-span-4">
+          <GlassCard className="h-[380px] flex flex-col justify-between border-white/[0.05]">
+            <h3 className="text-white text-base font-semibold tracking-wide mb-4">Target Intelligence Activity</h3>
+            <div className="space-y-3 flex-1 overflow-y-auto pr-1">
+              {[
+                { token: 'solWSOL', symbol: 'wSOL', rec: 'HOLD', score: '62', color: 'border-yellow-500/20 text-yellow-400' },
+                { token: 'solJUP', symbol: 'JUP', rec: 'STRONG_BUY', score: '91', color: 'border-emerald-500/20 text-emerald-400' },
+                { token: 'solRENDER', symbol: 'RENDER', rec: 'ACCUMULATING', score: '84', color: 'border-cyan-500/20 text-cyan-400' }
+              ].map((token, index) => (
+                <div key={index} className="p-3.5 border border-white/[0.03] bg-black/40 rounded-xl flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-white tracking-wide">{token.symbol}</p>
+                    <p className="text-[10px] font-mono text-gray-500">{token.token}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-[10px] font-mono border px-2 py-0.5 rounded ${token.color}`}>
+                      {token.rec}
+                    </span>
+                    <p className="text-xs font-mono font-bold text-gray-300 mt-1.5">Score: {token.score}/100</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </GlassCard>
+        </div>
+      </div>
+
+      {/* Advanced Structural x402 Settlement Matrix Maps */}
+      <div>
+        <h3 className="text-white text-lg font-bold tracking-wide mb-1">x402 Core Multi-Agent Flow Topography</h3>
+        <p className="text-gray-400 text-xs">Linear orchestration mapping across target cross-protocol validation environments.</p>
+        <PaymentFlow />
+      </div>
+    </div>
+  );
+}

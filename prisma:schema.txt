@@ -1,0 +1,145 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum AgentStatus {
+  IDLE
+  DISCOVERING
+  ANALYZING
+  EXECUTING
+  SETTLING
+  ERROR
+}
+
+enum WorkflowStep {
+  TRIGGER
+  SAP_DISCOVERY
+  TOOL_SELECTION
+  DATA_FETCH
+  AI_ANALYSIS
+  REPORT_GENERATION
+  ACTION_EXECUTION
+  PAYMENT_SETTLEMENT
+  COMPLETED
+}
+
+enum AnalysisSentiment {
+  BULLISH
+  BEARISH
+  NEUTRAL
+}
+
+enum PaymentStatus {
+  PENDING
+  ESCROWED
+  SETTLED
+  FAILED
+}
+
+model User {
+  id            String         @id @default(uuid())
+  publicKey     String         @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  agents        Agent[]
+  notifications Notification[]
+}
+
+model Agent {
+  id           String        @id @default(uuid())
+  name         String
+  status       AgentStatus   @default(IDLE)
+  currentStep  WorkflowStep  @default(TRIGGER)
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  executions   Execution[]
+  reports      Report[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Token {
+  id             String         @id @default(uuid())
+  mint           String         @unique
+  symbol         String
+  name           String
+  logoUrl        String?
+  riskScore      Float          // 0 to 100
+  growthScore    Float          // 0 to 100
+  sentimentScore Float          // 0 to 100
+  liquidityScore Float          // 0 to 100
+  recommendation String
+  analyses       Analysis[]
+  reports        Report[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Analysis {
+  id             String            @id @default(uuid())
+  tokenId        String
+  token          Token             @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  llmRawResponse String            @db.Text
+  sentiment      AnalysisSentiment @default(NEUTRAL)
+  classification String            // e.g., "HIGH_YIELD_MEV", "RUG_RISK"
+  confidence     Float
+  createdAt      DateTime          @default(now())
+}
+
+model Report {
+  id               String   @id @default(uuid())
+  agentId          String
+  agent            Agent    @relation(fields: [agentId], references: [id])
+  tokenId          String
+  token            Token    @relation(fields: [tokenId], references: [id])
+  executiveSummary String   @db.Text
+  strengths        Json     // String array
+  weaknesses       Json     // String array
+  opportunities    Json     // String array
+  threats          Json     // String array
+  finalScore       Float
+  markdownPayload  String   @db.Text
+  createdAt        DateTime @default(now())
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  txSignature   String        @unique
+  x402Escrow    String        // Escrow account address
+  amount        BigInt
+  mint          String        // Payment token mint (e.g., USDC, SOL)
+  status        PaymentStatus @default(PENDING)
+  executionId   String        @unique
+  execution     Execution     @relation(fields: [executionId], references: [id])
+  createdAt     DateTime      @default(now())
+}
+
+model Execution {
+  id           String       @id @default(uuid())
+  agentId      String
+  agent        Agent        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  step         WorkflowStep
+  logs         Json         // Array of log objects: { timestamp, message, level }
+  sapToolUsed  String?
+  payment      Payment?
+  success      Boolean      @default(true)
+  errorMessage String?
+  completedAt  DateTime?
+  createdAt    DateTime     @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // "OPPORTUNITY", "ALERT", "DAILY_SUMMARY"
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,50 @@
+import axios from 'axios';
+
+export interface AceAIAnalysisResult {
+  sentiment: 'BULLISH' | 'BEARISH' | 'NEUTRAL';
+  classification: string;
+  confidence: number;
+  summary: string;
+}
+
+export class AceDataEngine {
+  private apiKey: string;
+  private baseUrl: string;
+
+  constructor() {
+    this.apiKey = process.env.ACE_DATA_CLOUD_API_KEY || '';
+    this.baseUrl = 'https://api.acedatacloud.ai/v1'; // Production endpoint
+  }
+
+  private async postRequest(endpoint: string, payload: any) {
+    const response = await axios.post(`${this.baseUrl}${endpoint}`, payload, {
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  }
+
+  public async analyzeToken(tokenMint: string, onChainData: any): Promise<AceAIAnalysisResult> {
+    // 1. Parallel calls to Ace Data Cloud 3 distinct services: LLM, Sentiment, Classification
+    const [sentimentRes, classRes, rawLlmRes] = await Promise.all([
+      this.postRequest('/sentiment/analyze', { text: JSON.stringify(onChainData) }),
+      this.postRequest('/classifier/predict', { data: onChainData, taxonomy: 'solana-defi-v1' }),
+      this.postRequest('/llm/chat', {
+        model: 'ace-deepseek-r1-pro',
+        messages: [
+          { role: 'system', content: 'You are SolPlus Agent Core AI. Synthesize token metrics into definitive threat/growth matrix evaluations.' },
+          { role: 'user', content: `Analyze this market data: ${JSON.stringify(onChainData)}` }
+        ]
+      })
+    ]);
+
+    return {
+      sentiment: sentimentRes.sentiment, // BULLISH, BEARISH, NEUTRAL
+      classification: classRes.label,     // e.g. ACCUMULATION_TARGET, LIQUIDITY_DRAIN_RISK
+      confidence: classRes.score || 0.92,
+      summary: rawLlmRes.choices[0].message.content,
+    };
+  }
+}

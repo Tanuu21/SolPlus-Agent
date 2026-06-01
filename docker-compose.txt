@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  solplus-db:
+    image: postgres:15-alpine
+    container_name: solplus-postgres-prod
+    restart: always
+    environment:
+      POSTGRES_USER: solplus_admin
+      POSTGRES_PASSWORD: SecretProductionPasswordVaultXYZ112
+      POSTGRES_DB: solplus_intelligence_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  solplus-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: solplus-core-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://solplus_admin:SecretProductionPasswordVaultXYZ112@solplus-db:5432/solplus_intelligence_db?schema=public
+      - SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
+      - ACE_DATA_CLOUD_API_KEY=ace_live_sec_prod_alpha_matrix_key
+      - SYNAPSE_RPC_URL=https://synapse.mainnet.oobe.protocol
+      - TELEGRAM_BOT_TOKEN=0000000000:AA-YourLiveProductionTelegramBotTokenKey Here
+    depends_on:
+      - solplus-db
+
+volumes:
+  postgres_data:

@@ -1,0 +1,96 @@
+'use client';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Logo } from '@/components/ui/Logo';
+import { GlassCard } from '@/components/ui/GlassCard';
+import { NetworkGraph } from '@/components/ui/NetworkGraph';
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-[#050505] bg-aurora-glow text-white selection:bg-accentCyan/30 relative overflow-hidden font-sans">
+      {/* Floating Ambient Particle Layers */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.06),transparent_45%)] pointer-events-none" />
+
+      {/* Global Header Element */}
+      <header className="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center border-b border-white/[0.04] backdrop-blur-md z-50 relative">
+        <Logo />
+        <nav className="hidden md:flex gap-8 text-sm text-gray-400 tracking-wide">
+          <a href="#features" className="hover:text-white transition-colors">Architecture</a>
+          <a href="#engine" className="hover:text-white transition-colors">SAP Engine</a>
+          <a href="#pricing" className="hover:text-white transition-colors">x402 Clearing</a>
+        </nav>
+        <button className="px-5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg border border-accentCyan/30 bg-accentCyan/10 text-accentCyan hover:bg-accentCyan hover:text-black transition-all shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+          Launch Command Center
+        </button>
+      </header>
+
+      {/* Hero Execution Segment */}
+      <main className="max-w-7xl mx-auto px-6 pt-20 pb-32 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+        <div className="lg:col-span-7 flex flex-col justify-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/20 bg-purple-500/5 text-purple-300 text-xs font-mono mb-6 w-fit"
+          >
+            <span className="w-2 h-2 rounded-full bg-accentEmerald animate-ping" />
+            OOBE Protocol Mainnet Infrastructure Initialized
+          </motion.div>
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] bg-gradient-to-b from-white via-gray-100 to-gray-500 bg-clip-text text-transparent"
+          >
+            Autonomous Solana <br />
+            <span className="bg-gradient-to-r from-purple-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">Intelligence Platform</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-gray-400 mt-6 text-lg max-w-xl leading-relaxed"
+          >
+            Discover. Analyze. Execute. Settle. Continuous on-chain opportunity optimization utilizing advanced Ace Data Cloud LLM multi-model agents. Powered securely by automated x402 transaction clearing routes.
+          </motion.p>
+
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap gap-4 mt-10"
+          >
+            <button className="px-8 py-4 bg-premium-gradient text-black font-bold rounded-xl shadow-[0_4px_25px_rgba(6,182,212,0.4)] hover:brightness-110 transition-all text-sm uppercase tracking-wider">
+              Initialize Autonomous Agent
+            </button>
+            <button className="px-8 py-4 bg-[#0B0B0B] border border-white/[0.08] text-white font-medium rounded-xl hover:bg-white/[0.02] transition-all text-sm tracking-wide">
+              View Engine Architecture
+            </button>
+          </motion.div>
+        </div>
+
+        {/* Live Vector Activity Node Visualizer */}
+        <div className="lg:col-span-5 h-[450px] relative">
+          <GlassCard className="w-full h-full flex flex-col justify-between p-0 overflow-hidden group border-white/[0.06]">
+            <div className="p-6 pb-0 z-20">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-mono text-gray-500 uppercase tracking-widest">Real-time Stream Matrix</span>
+                <span className="px-2 py-0.5 text-[10px] font-mono bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">98.4% Efficiency</span>
+              </div>
+              <h3 className="text-white text-lg font-semibold tracking-wide mt-2">Active Telemetry Routing Matrix</h3>
+            </div>
+            <div className="absolute inset-0 z-0">
+              <NetworkGraph />
+            </div>
+            <div className="p-6 bg-gradient-to-t from-black via-black/80 to-transparent z-20 border-t border-white/[0.04]">
+              <div className="font-mono text-[11px] text-accentCyan space-y-1">
+                <p className="text-gray-500">[00:04:11] SAP discovery module querying pool logs...</p>
+                <p>[00:04:12] Ace Data Cloud Inference pipeline response: BULLISH (94% confidence)</p>
+                <p className="text-accentEmerald">[00:04:13] x402 dynamic settlement transaction pipeline cleared.</p>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
+      </main>
+    </div>
+  );
+}
